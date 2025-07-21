@@ -1,0 +1,59 @@
+import tkinter as tk
+from tkinter import messagebox
+import random
+import string
+
+class PasswordGeneratorApp:
+    def _init_(self, root):
+        self.root = root
+        self.root.title("Password Generator")
+        self.root.geometry("400x250")
+        self.root.configure(bg='lightgray')
+
+        # Title Label
+        tk.Label(root, text="Password Generator", font=("Helvetica", 16, "bold"), bg='lightgray').pack(pady=10)
+
+        # Password Length Input
+        tk.Label(root, text="Enter password length:", font=("Helvetica", 12), bg='lightgray').pack()
+        self.length_var = tk.IntVar(value=12)
+        self.length_entry = tk.Entry(root, textvariable=self.length_var, width=10, font=("Helvetica", 12))
+        self.length_entry.pack(pady=5)
+
+        # Generate Button
+        tk.Button(root, text="Generate Password", font=("Helvetica", 12), command=self.generate_password).pack(pady=10)
+
+        # Display Password
+        self.password_var = tk.StringVar()
+        self.password_entry = tk.Entry(root, textvariable=self.password_var, font=("Helvetica", 12), width=30, state='readonly', justify='center')
+        self.password_entry.pack(pady=5)
+
+        # Copy Button
+        tk.Button(root, text="Copy to Clipboard", font=("Helvetica", 12), command=self.copy_password).pack(pady=10)
+
+    def generate_password(self):
+        try:
+            length = int(self.length_var.get())
+            if length < 4:
+                messagebox.showwarning("Warning", "Password length should be at least 4.")
+                return
+        except ValueError:
+            messagebox.showwarning("Warning", "Please enter a valid number for length.")
+            return
+
+        chars = string.ascii_letters + string.digits + string.punctuation
+        password = ''.join(random.choice(chars) for _ in range(length))
+        self.password_var.set(password)
+
+    def copy_password(self):
+        password = self.password_var.get()
+        if password:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(password)
+            messagebox.showinfo("Copied", "Password copied to clipboard!")
+        else:
+            messagebox.showwarning("Warning", "No password to copy.")
+
+if _name_ == "_main_":
+    root = tk.Tk()
+    app = PasswordGeneratorApp(root)
+    root.mainloop()
